@@ -1,0 +1,55 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+:host *:not(style) {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.icon-container {
+  position: relative;
+}
+
+.ellipse-shadow {
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.icon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.outline svg {
+  height: 100%;
+  width: 100%;
+}
+
+.ellipse svg {
+  height: 100%;
+  width: 100%;
+}
+
+.icon svg {
+  display: block;
+  margin: auto;
+  width: 50%;
+  height: 50%;
+}
