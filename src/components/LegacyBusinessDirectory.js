@@ -4,7 +4,7 @@ import centroid from '@turf/centroid';
 
 export default class LBDirectory extends HTMLElement {
     static get observedAttributes() {
-        return ['data-app-state', 'data-raw-list', 'data-categorized-list', 'data-business-info-state'];
+        return ['data-app-state', 'data-raw-list', 'data-categorized-list', 'data-business-info-state', 'data-active-business'];
     }
 
     constructor() {
@@ -243,6 +243,19 @@ export default class LBDirectory extends HTMLElement {
             
             case 'data-business-info-state':
                 this.modal.setAttribute('data-show', newValue);
+            
+            case 'data-active-business':
+                let bInfo = JSON.parse(newValue);
+                console.log(bInfo);
+                 this.modalContent.innerHTML = `
+                    <p><strong>Name:</strong> ${bInfo.properties.busi_name}<br>
+                    <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
+                    <strong>Description:</strong> ${bInfo.properties.desc_business}
+                    </p>
+                    <cod-map data-location="{&quot;address&quot;:&quot;${bInfo.properties.busi_owners_address}&quot;,&quot;location&quot;:{&quot;x&quot;:${bInfo.geometry.coordinates[0]},&quot;y&quot;:${bInfo.geometry.coordinates[1]}}}" data-map-state="init"></cod-map>
+                `;
+                this.modal.setAttribute('data-show', true);
+                break;
         
             default:
                 this.loadApp(this);
@@ -314,19 +327,8 @@ export default class LBDirectory extends HTMLElement {
     }
 
     showBusiness(ev){
-        console.log(JSON.parse(ev.target.getAttribute('data-business')));
-        let bInfo = JSON.parse(ev.target.getAttribute('data-business'));
-        let businessInfoContent = document.createElement('div');
-        businessInfoContent.className = 'b-info-content';
-        businessInfoContent.innerHTML = `
-            <p><strong>Name:</strong> ${bInfo.properties.busi_name}<br>
-            <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
-            <strong>Description:</strong> ${bInfo.properties.desc_business}
-            </p>
-            <cod-map data-location="{&quot;address&quot;:&quot;1104 Military St, Detroit, MI, 48209&quot;,&quot;location&quot;:{&quot;x&quot;:-83.103111,&quot;y&quot;:42.31103400000001}}" data-map-state="init"></cod-map>
-        `;
-        this.modalContent.innerHTML = businessInfoContent;
-        this.setAttribute('data-business-info-state', true);
+        let app = document.getElementsByTagName('lb-directory');
+        app[0].setAttribute('data-active-business', ev.target.getAttribute('data-business'))
     }
 
     loadApp(app) {
