@@ -4,7 +4,7 @@ import centroid from '@turf/centroid';
 
 export default class LBDirectory extends HTMLElement {
     static get observedAttributes() {
-        return ['data-app-state', 'data-raw-list', 'data-categorized-list', 'data-business-info-state', 'data-active-business'];
+        return ['data-app-state', 'data-raw-list', 'data-categorized-list', 'data-business-info-state', 'data-active-business','data-active-filters'];
     }
 
     constructor() {
@@ -25,11 +25,30 @@ export default class LBDirectory extends HTMLElement {
         // console.log(err);
         });
 
+        // Business Categories
+        this.businessCategories = [
+            {'value':'education_workforce','text':'Education and Training'},
+            {'value':'health_human','text':'Health & Human Services'},
+            {'value':'media_technology','text':'Media, Production and Electronic Technology'},
+            {'value':'clothing_apparel','text':'Clothing & Apparel'},
+            {'value':'home_landscape_construction','text':'Home Interior, Landscape, and Construction'},
+            {'value':'product_manufacturing','text':'Product Manufacturing'},
+            {'value':'professional_services','text':'Professional Services'},
+            {'value':'fitness_physical','text':'Fitness & Physical Recreation'},
+            {'value':'entertainment_nightlife','text':'Entertainment & Nightlife'},
+            {'value':'agriculture','text':'Agriculture'},
+            {'value':'hospitality_food_beverage','text':'Hospitality - Food & Beverage'},
+            {'value':'event_hospitality','text':'Event Space, Museum & Hospitality'},
+            {'value':'food_manufacturing_packaging','text':'Food Beverage Manufacturing & Packaging'},
+            {'value':'other_type','text':'Other'},
+        ];
+
         // Create Modal for Business
         this.modalContent = document.createElement('article');
         this.modalContent.innerHTML = ``;
         this.modal = document.createElement('cod-modal');
         this.modal.setAttribute('data-id', 'business-info');
+        this.modal.setAttribute('data-size', 'lg');
 
         this.modalBody = document.createElement('cod-modal-body');
         this.modalBody.appendChild(this.modalContent);
@@ -128,8 +147,6 @@ export default class LBDirectory extends HTMLElement {
             'food_manufacturing_packaging': [],
             'other_type': []
         };
-        console.log(data);
-        console.log(app);
         data.features.forEach(item => {
             switch (item.properties.busi_type) {
                 case 'education_workforce':
@@ -192,7 +209,6 @@ export default class LBDirectory extends HTMLElement {
                     break;
             }
         });
-        console.log(organizedList);
         app.setAttribute('data-categorized-list', JSON.stringify(organizedList));
     }
 
@@ -200,8 +216,7 @@ export default class LBDirectory extends HTMLElement {
         console.log(`App - attribute: ${name}, old: ${oldValue}, new: ${newValue}`);
         switch (name) {
             case 'data-active-filters':
-                if(oldValue !== null){
-                    const newFilters = newValue.split(',');
+                    const newFilters = JSON.parse(newValue);
                     let url= this.buildQuery(newFilters);
                     console.log(url);
                     const app = this;
@@ -209,11 +224,11 @@ export default class LBDirectory extends HTMLElement {
                     .then((resp) => resp.json()) // Transform the data into json
                     .then(function (data) {
                         console.log(data);
-                        (app.map.map.getSource('data-points')) ? app.map.map.getSource('data-points').setData(data) : 0;
+                        app.setAttribute('data-raw-list', JSON.stringify(data));
+                        // (app.map.map.getSource('data-points')) ? app.map.map.getSource('data-points').setData(data) : 0;
                     }).catch(err => {
                     // console.log(err);
                     });
-                }
                 break;
 
             case 'data-active-boundaries':
@@ -248,10 +263,23 @@ export default class LBDirectory extends HTMLElement {
                 let bInfo = JSON.parse(newValue);
                 console.log(bInfo);
                  this.modalContent.innerHTML = `
-                    <p><strong>Name:</strong> ${bInfo.properties.busi_name}<br>
-                    <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
-                    <strong>Description:</strong> ${bInfo.properties.desc_business}
-                    </p>
+                    <h4>${bInfo.properties.busi_name}</h4>
+                    <div class="row">
+                        <div class="col-md-6 order-2 order-md-1">
+                            <p>
+                            <strong>Category:</strong> ${this.cleanCategoryName(bInfo.properties.busi_type)}<br>
+                            <strong>Address:</strong> ${bInfo.properties.busi_owners_address}
+                            ${(bInfo.properties.busi_owners_website != null) ? `<br><br><a href="${bInfo.properties.busi_owners_website}" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
+                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
+                                </svg></a>` : ''}
+                            </p>
+                        </div>
+                        <div class="col-md-6 order-1 order-md-2">
+                            <p>
+                            ${bInfo.properties.desc_business}
+                            </p>
+                        </div>
+                    </div>
                     <cod-map data-location="{&quot;address&quot;:&quot;${bInfo.properties.busi_owners_address}&quot;,&quot;location&quot;:{&quot;x&quot;:${bInfo.geometry.coordinates[0]},&quot;y&quot;:${bInfo.geometry.coordinates[1]}}}" data-map-state="init"></cod-map>
                 `;
                 this.modal.setAttribute('data-show', true);
@@ -279,19 +307,19 @@ export default class LBDirectory extends HTMLElement {
     buildQuery(filters){
         console.log(filters)
         let tmpWhere = [];
-        filters.forEach(filter => {
+        for (const filter in filters){
             switch (filter) {
-                case 'is_asian_owned':
-                    tmpWhere.push('is_asian_owned%3D1');
+                case 'busi_type':
+                    (filters[filter] != null) ? tmpWhere.push(`busi_type%3D%27${filters[filter]}%27`) : '';
                     break;
 
                 default:
                     break;
             }
-        });
+        };
         tmpWhere = tmpWhere.join('+AND+');
         (tmpWhere === '') ? tmpWhere = '1%3D1' : 0;
-        return `https://services2.arcgis.com/qvkbeam7Wirps6zC/ArcGIS/rest/services/council_surveyed_businesses/FeatureServer/0/query?where=${tmpWhere}&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=`;
+        return `https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/survey123_908f9c268b0249d6994b4500014cf887_results/FeatureServer/0/query?where=${tmpWhere}&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=`;
         
     }
 
@@ -309,32 +337,27 @@ export default class LBDirectory extends HTMLElement {
     }
 
     updateMainData(ev){
-        const app = document.getElementsByTagName('d6-business-map');
-        let filters = (app[0].getAttribute('data-active-filters') === null) ? '' : app[0].getAttribute('data-active-filters');
-        let tempFilters = filters.split(',');
-        filters = [];
-        if(ev.target.formCheck.checked){
-            filters = tempFilters;
-            filters.push(ev.target.formCheck.value);
+        const app = document.getElementsByTagName('cod-lb-directory');
+        let filters = (app[0].getAttribute('data-active-filters') === null) ? {} : JSON.parse(app[0].getAttribute('data-active-filters'));
+        if(ev.target.tagName == 'SELECT'){
+            filters[ev.target.id] = ev.target.value;
         }else{
-            let multiLayers = ev.target.formCheck.value.split(',');
-            tempFilters.forEach((filter) => {
-                (multiLayers.includes(filter)) ? 0 : filters.push(filter);
-            });
+            // let multiLayers = ev.target.formCheck.value.split(',');
+            // tempFilters.forEach((filter) => {
+            //     (multiLayers.includes(filter)) ? 0 : filters.push(filter);
+            // });
         }
-        filters = filters.join(',');
-        app[0].setAttribute('data-active-filters', filters);
+        console.log(filters);
+        app[0].setAttribute('data-active-filters', JSON.stringify(filters));
     }
 
     showBusiness(ev){
-        let app = document.getElementsByTagName('lb-directory');
+        let app = document.getElementsByTagName('cod-lb-directory');
         app[0].setAttribute('data-active-business', ev.target.getAttribute('data-business'))
     }
 
     loadApp(app) {
         const shadow = app.shadowRoot;
-        const appWrapper = document.createElement('div');
-        appWrapper.id = 'app-wrapper';
         switch (app.getAttribute('data-app-state')) {
             case 'start':
                 let loader = document.createElement('cod-loader');
@@ -343,26 +366,58 @@ export default class LBDirectory extends HTMLElement {
                 break;
 
             case 'loaded':
+                while (this.appWrapper.firstChild) {
+                    this.appWrapper.removeChild(this.appWrapper.firstChild);
+                }
                 let bList = document.createElement('article');
                 let bTitle = document.createElement('h2');
                 bTitle.innerText = 'Legacy Businesses';
-                let bContainer = document.createElement('div');
+                // Build filters
+                let filterContainer = document.createElement('section');
+                filterContainer.className = 'filter-section';
+                let businessType = document.createElement('div');
+                let businessTypeSelect = document.createElement('select');
+                businessTypeSelect.id = 'busi_type';
+                let defaultBusinessType = document.createElement('option');
+                defaultBusinessType.value = 'All';
+                defaultBusinessType.innerText = 'All';
+                businessTypeSelect.appendChild(defaultBusinessType);
+                this.businessCategories.forEach((category)=>{
+                    let opItem = document.createElement('option');
+                    opItem.value = category.value;
+                    opItem.innerText = category.text;
+                    businessTypeSelect.appendChild(opItem);
+                });
+                businessTypeSelect.addEventListener('change', (ev)=>{
+                    this.updateMainData(ev);
+                })
+                let businessTypeLabel = document.createElement('label');
+                businessTypeLabel.setAttribute('for', 'busi_type');
+                businessTypeLabel.innerText = 'Business Type';
+                businessType.appendChild(businessTypeLabel);
+                businessType.appendChild(businessTypeSelect);
+                filterContainer.appendChild(businessType);
+                // Build business listing
+                let bContainer = document.createElement('section');
                 bContainer.className = 'full-list';
                 let organizedData = JSON.parse(app.getAttribute('data-categorized-list'));
                 for (const cat in organizedData){
-                    let bCategory = document.createElement('h3');
-                    bCategory.innerText = app.cleanCategoryName(cat);
-                    bContainer.appendChild(bCategory);
-                    organizedData[cat].forEach(item => {
-                        let bItem = document.createElement('cod-button');
-                        bItem.setAttribute('variant', 'text');
-                        bItem.setAttribute('data-business', JSON.stringify(item));
-                        bItem.innerText = item.properties.busi_name;    
-                        bItem.addEventListener('click', app.showBusiness);
-                        bContainer.appendChild(bItem);    
-                    });
+                    if(organizedData[cat].length > 0) {
+                        let bCategory = document.createElement('h3');
+                        bCategory.innerText = app.cleanCategoryName(cat);
+                        bContainer.appendChild(bCategory);
+                        organizedData[cat].forEach(item => {
+                            let bItem = document.createElement('cod-button');
+                            bItem.setAttribute('variant', 'text');
+                            bItem.setAttribute('data-business', JSON.stringify(item));
+                            bItem.innerText = item.properties.busi_name;    
+                            bItem.addEventListener('click', app.showBusiness);
+                            bContainer.appendChild(bItem);    
+                        });
+                    }
                 }
                 bList.appendChild(bTitle);
+                bList.appendChild(filterContainer);
                 bList.appendChild(bContainer);
                 this.appWrapper.appendChild(bList);
                 break;

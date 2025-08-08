@@ -1,2 +1,2 @@
 import LBDirectory from './components/LegacyBusinessDirectory';
-customElements.define('lb-directory', LBDirectory);
+customElements.define('cod-lb-directory', LBDirectory);
