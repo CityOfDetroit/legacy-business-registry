@@ -4,7 +4,7 @@ import centroid from '@turf/centroid';
 
 export default class LBDirectory extends HTMLElement {
     static get observedAttributes() {
-        return ['data-app-state', 'data-raw-list', 'data-categorized-list', 'data-business-info-state', 'data-active-business','data-active-filters'];
+        return ['data-app-state', 'data-raw-list', 'data-categorized-list', 'data-business-info-state', 'data-active-business','data-active-filters','data-display-type'];
     }
 
     constructor() {
@@ -244,7 +244,7 @@ export default class LBDirectory extends HTMLElement {
                 }
                 break;
             
-            case 'data-language':
+            case 'data-display-type':
                 this.setAttribute('data-app-state', this.getAttribute('data-app-state'));
                 break;
 
@@ -268,10 +268,11 @@ export default class LBDirectory extends HTMLElement {
                         <div class="col-md-6 order-2 order-md-1">
                             <p>
                             <strong>Category:</strong> ${this.cleanCategoryName(bInfo.properties.busi_type)}<br>
-                            <strong>Address:</strong> ${bInfo.properties.busi_owners_address}
-                            ${(bInfo.properties.busi_owners_website != null) ? `<br><br><a href="${bInfo.properties.busi_owners_website}" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
-                                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
-                                </svg></a>` : ''}
+                            <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
+                            <strong>Established:</strong> ${this.getCleanDate(bInfo.properties.date_)}
+                            ${(bInfo.properties.busi_owners_email != null) ? `<br><strong>Email:</strong>${bInfo.properties.busi_owners_email}` : ''}
+                            ${(bInfo.properties.busi_owners_phone != null) ? `<br><strong>Phone:</strong>${bInfo.properties.busi_owners_phone}` : ''}
+                            ${(bInfo.properties.busi_owners_website != null) ? `<br><a href="${bInfo.properties.busi_owners_website}" target="_blank">Website</a>` : ''}
                             </p>
                         </div>
                         <div class="col-md-6 order-1 order-md-2">
@@ -310,7 +311,7 @@ export default class LBDirectory extends HTMLElement {
         for (const filter in filters){
             switch (filter) {
                 case 'busi_type':
-                    (filters[filter] != null) ? tmpWhere.push(`busi_type%3D%27${filters[filter]}%27`) : '';
+                    (filters[filter] != 'null') ? tmpWhere.push(`busi_type%3D%27${filters[filter]}%27`) : '';
                     break;
 
                 default:
@@ -318,6 +319,7 @@ export default class LBDirectory extends HTMLElement {
             }
         };
         tmpWhere = tmpWhere.join('+AND+');
+        console.log(tmpWhere);
         (tmpWhere === '') ? tmpWhere = '1%3D1' : 0;
         return `https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/survey123_908f9c268b0249d6994b4500014cf887_results/FeatureServer/0/query?where=${tmpWhere}&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=geojson&token=`;
         
@@ -351,6 +353,61 @@ export default class LBDirectory extends HTMLElement {
         app[0].setAttribute('data-active-filters', JSON.stringify(filters));
     }
 
+    getCleanDate(date){
+        let tempDate = new Date(date);
+        let formatedDate = '';
+        switch (tempDate.getMonth()) {
+            case 0:
+                formatedDate = `Jan ${tempDate.getFullYear()}`;
+                break;
+            
+            case 1:
+                formatedDate = `Feb ${tempDate.getFullYear()}`;
+                break;
+            
+            case 2:
+                formatedDate = `Mar ${tempDate.getFullYear()}`;
+                break;
+            
+            case 3:
+                formatedDate = `Apr ${tempDate.getFullYear()}`;
+                break;
+            
+            case 4:
+                formatedDate = `May ${tempDate.getFullYear()}`;
+                break;
+            
+            case 5:
+                formatedDate = `Jun ${tempDate.getFullYear()}`;
+                break;
+            
+            case 6:
+                formatedDate = `Jul ${tempDate.getFullYear()}`;
+                break;
+            
+            case 7:
+                formatedDate = `Aug ${tempDate.getFullYear()}`;
+                break;
+            
+            case 8:
+                formatedDate = `Sep ${tempDate.getFullYear()}`;
+                break;
+            
+            case 9:
+                formatedDate = `Oct ${tempDate.getFullYear()}`;
+                break;
+            
+            case 10:
+                formatedDate = `Nov ${tempDate.getFullYear()}`;
+                break;
+        
+            default:
+                formatedDate = `Dec ${tempDate.getFullYear()}`;
+                break;
+        }
+        return formatedDate;
+    }
+
     showBusiness(ev){
         let app = document.getElementsByTagName('cod-lb-directory');
         app[0].setAttribute('data-active-business', ev.target.getAttribute('data-business'))
@@ -358,6 +415,9 @@ export default class LBDirectory extends HTMLElement {
 
     loadApp(app) {
         const shadow = app.shadowRoot;
+        const currentFilters = (app.getAttribute('data-active-filters')) ? JSON.parse(app.getAttribute('data-active-filters')): null;
+        const rawData = JSON.parse(app.getAttribute('data-raw-list'));
+        const displayType = app.getAttribute('data-display-type');
         switch (app.getAttribute('data-app-state')) {
             case 'start':
                 let loader = document.createElement('cod-loader');
@@ -366,20 +426,47 @@ export default class LBDirectory extends HTMLElement {
                 break;
 
             case 'loaded':
+
                 while (this.appWrapper.firstChild) {
                     this.appWrapper.removeChild(this.appWrapper.firstChild);
                 }
                 let bList = document.createElement('article');
                 let bTitle = document.createElement('h2');
                 bTitle.innerText = 'Legacy Businesses';
+                
+                bList.appendChild(bTitle);
+                // Build view switch
+                let displayGroup = document.createElement('cod-button-group');
+                displayGroup.setAttribute('label', 'Display switch');
+
+                let listDisplay = document.createElement('cod-button');
+                listDisplay.id = 'display-list';
+                listDisplay.innerHTML = `<cod-icon data-icon="list-task" data-size="small" slot="prefix"></cod-icon> List`;
+                listDisplay.addEventListener('click', (ev)=>{
+                    console.log(ev.target);
+                    app.setAttribute('data-display-type', ev.target.id);
+                })
+
+                let mapDisplay = document.createElement('cod-button');
+                mapDisplay.id = 'display-map';
+                mapDisplay.innerHTML = `<cod-icon data-icon="bounding-box" data-size="small" slot="prefix"></cod-icon> Map`;
+                mapDisplay.addEventListener('click', (ev)=>{
+                    console.log(ev.target);
+                    app.setAttribute('data-display-type', ev.target.id);
+                });
+                displayGroup.appendChild(mapDisplay);
+                displayGroup.appendChild(listDisplay);
+                
                 // Build filters
                 let filterContainer = document.createElement('section');
                 filterContainer.className = 'filter-section';
+                bList.appendChild(filterContainer);
+
                 let businessType = document.createElement('div');
                 let businessTypeSelect = document.createElement('select');
                 businessTypeSelect.id = 'busi_type';
                 let defaultBusinessType = document.createElement('option');
-                defaultBusinessType.value = 'All';
+                defaultBusinessType.value = null;
                 defaultBusinessType.innerText = 'All';
                 businessTypeSelect.appendChild(defaultBusinessType);
                 this.businessCategories.forEach((category)=>{
@@ -387,6 +474,7 @@ export default class LBDirectory extends HTMLElement {
                     opItem.value = category.value;
                     opItem.innerText = category.text;
                     businessTypeSelect.appendChild(opItem);
+                    (currentFilters != null && currentFilters['busi_type'] == category.value) ? opItem.selected = true : '';
                 });
                 businessTypeSelect.addEventListener('change', (ev)=>{
                     this.updateMainData(ev);
@@ -396,29 +484,63 @@ export default class LBDirectory extends HTMLElement {
                 businessTypeLabel.innerText = 'Business Type';
                 businessType.appendChild(businessTypeLabel);
                 businessType.appendChild(businessTypeSelect);
+
+                filterContainer.appendChild(displayGroup);
                 filterContainer.appendChild(businessType);
-                // Build business listing
-                let bContainer = document.createElement('section');
-                bContainer.className = 'full-list';
-                let organizedData = JSON.parse(app.getAttribute('data-categorized-list'));
-                for (const cat in organizedData){
-                    if(organizedData[cat].length > 0) {
-                        let bCategory = document.createElement('h3');
-                        bCategory.innerText = app.cleanCategoryName(cat);
-                        bContainer.appendChild(bCategory);
-                        organizedData[cat].forEach(item => {
-                            let bItem = document.createElement('cod-button');
-                            bItem.setAttribute('variant', 'text');
-                            bItem.setAttribute('data-business', JSON.stringify(item));
-                            bItem.innerText = item.properties.busi_name;    
-                            bItem.addEventListener('click', app.showBusiness);
-                            bContainer.appendChild(bItem);    
-                        });
+
+                if(displayType == 'display-map'){
+                    // Building business map
+                    let tempMapData = { 
+                        "id": "businesses", 
+                        "layers": [
+                            { "name": "data-points", 
+                                "type": "circle", 
+                                "radius": 10, 
+                                "color": "#004445", 
+                                "active": true, 
+                                "sort": 10, 
+                                "source": "data-points" 
+                            }
+                        ], 
+                        "source": rawData
+                    };
+                    console.log(tempMapData);
+                    let bMap = document.createElement('cod-map');
+                    bMap.id = 'business-map';
+                    bMap.setAttribute('data-map-mode','popup');
+                    bMap.setAttribute('data-center','-83.103111,42.31103400000001');
+                    bMap.setAttribute('data-zoom','12');
+                    bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
+                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"}]}');
+                    bMap.setAttribute('data-map-state','init');
+                    bMap.setAttribute('data-map-active-data','businesses');
+                    bList.appendChild(bMap);
+                }else{
+                    // Build business listing
+                    let bContainer = document.createElement('section');
+                    bContainer.className = 'full-list';
+                    let organizedData = JSON.parse(app.getAttribute('data-categorized-list'));
+                    for (const cat in organizedData){
+                        if(organizedData[cat].length > 0) {
+                            let catBlock = document.createElement('div');
+                            catBlock.className = 'b-cat-block';
+                            let bCategory = document.createElement('h3');
+                            bCategory.innerText = app.cleanCategoryName(cat);
+                            catBlock.appendChild(bCategory);
+                            organizedData[cat].forEach(item => {
+                                let bItem = document.createElement('cod-button');
+                                bItem.setAttribute('variant', 'text');
+                                bItem.setAttribute('data-business', JSON.stringify(item));
+                                bItem.innerText = item.properties.busi_name;    
+                                bItem.addEventListener('click', app.showBusiness);
+                                catBlock.appendChild(bItem);    
+                            });
+                            bContainer.appendChild(catBlock);
+                        }
                     }
+                    bList.appendChild(bContainer);
                 }
-                bList.appendChild(bTitle);
-                bList.appendChild(filterContainer);
-                bList.appendChild(bContainer);
+                
                 this.appWrapper.appendChild(bList);
                 break;
 

@@ -7,12 +7,9 @@ d6-business-map{
     -ms-flex-align: stretch;
     height: 800px;
 }
-
 #app-wrapper article{
     width: 100%;
 }
-
-
 cod-map{
     flex: 1;
 }
@@ -22,24 +19,34 @@ cod-map{
 .full-list cod-button{
     display: block;
 }
-
+.filter-section{
+    display: flex;
+    align-items: center;
+}
 @media all and (min-width: 850px) {
     .full-list {
         columns: 2 auto;
         padding: 1em;
     }
+    .b-cat-block{
+        -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid;
+    }
 }
-
 @media all and (min-width: 1275px) {
     .full-list {
         columns: 3 auto;
         padding: 1em;
     }
+    .b-cat-block{
+        -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid;
+    }
 }
-
 @media all and (min-width: 1700px) {
     .full-list {
         columns: 4 auto;
         padding: 1em;
+    }
+    .b-cat-block{
+        -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid;
     }
 }
