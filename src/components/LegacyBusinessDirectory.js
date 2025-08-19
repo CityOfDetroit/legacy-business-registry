@@ -441,6 +441,7 @@ export default class LBDirectory extends HTMLElement {
 
                 let listDisplay = document.createElement('cod-button');
                 listDisplay.id = 'display-list';
+                listDisplay.setAttribute('variant', 'primary');
                 listDisplay.innerHTML = `<cod-icon data-icon="list-task" data-size="small" slot="prefix"></cod-icon> List`;
                 listDisplay.addEventListener('click', (ev)=>{
                     console.log(ev.target);
@@ -449,6 +450,7 @@ export default class LBDirectory extends HTMLElement {
 
                 let mapDisplay = document.createElement('cod-button');
                 mapDisplay.id = 'display-map';
+                mapDisplay.setAttribute('variant', 'primary');
                 mapDisplay.innerHTML = `<cod-icon data-icon="bounding-box" data-size="small" slot="prefix"></cod-icon> Map`;
                 mapDisplay.addEventListener('click', (ev)=>{
                     console.log(ev.target);
@@ -463,6 +465,7 @@ export default class LBDirectory extends HTMLElement {
                 bList.appendChild(filterContainer);
 
                 let businessType = document.createElement('div');
+                businessType.id = 'b-type-select-box';
                 let businessTypeSelect = document.createElement('select');
                 businessTypeSelect.id = 'busi_type';
                 let defaultBusinessType = document.createElement('option');
@@ -481,9 +484,13 @@ export default class LBDirectory extends HTMLElement {
                 })
                 let businessTypeLabel = document.createElement('label');
                 businessTypeLabel.setAttribute('for', 'busi_type');
-                businessTypeLabel.innerText = 'Business Type';
-                businessType.appendChild(businessTypeLabel);
+                businessTypeLabel.innerHTML = `Business Type
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                </svg>
+                `;
                 businessType.appendChild(businessTypeSelect);
+                businessType.appendChild(businessTypeLabel);
 
                 filterContainer.appendChild(displayGroup);
                 filterContainer.appendChild(businessType);
@@ -504,14 +511,25 @@ export default class LBDirectory extends HTMLElement {
                         ], 
                         "source": rawData
                     };
+                    let tempLayers = [
+                        {
+                            "name":"council",
+                            "layers":[
+                                {"name":"council-lines","type":"line","color":"#004445","opacity":null,"width":2,"active":true,"source":"council"},
+                                {"name":"council-fill","type":"fill","color":"#004445","opacity":0.1,"width":null,"active":true,"source":"council"}
+                            ],
+                            "source":"https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Council_Districts/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+                        }
+                    ];
                     console.log(tempMapData);
                     let bMap = document.createElement('cod-map');
                     bMap.id = 'business-map';
                     bMap.setAttribute('data-map-mode','popup');
-                    bMap.setAttribute('data-center','-83.103111,42.31103400000001');
-                    bMap.setAttribute('data-zoom','12');
+                    // bMap.setAttribute('data-center','-83.103111,42.31103400000001');
+                    bMap.setAttribute('data-zoom','11');
                     bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
-                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"}]}');
+                    bMap.setAttribute('data-map-layers',JSON.stringify(tempLayers));
+                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"}]}');
                     bMap.setAttribute('data-map-state','init');
                     bMap.setAttribute('data-map-active-data','businesses');
                     bList.appendChild(bMap);

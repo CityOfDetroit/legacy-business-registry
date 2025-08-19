@@ -23,6 +23,56 @@ cod-map{
     display: flex;
     align-items: center;
 }
+#b-type-select-box{
+    position: relative;
+}
+#b-type-select-box label{
+    color: #fff;
+    position: absolute;
+    top: 2em;
+    right: .75em;
+}
+#b-type-select-box label svg{
+    position: relative;
+    top: .25em;
+}
+#b-type-select-box select:has(option:checked)  + label{
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}   
+#b-type-select-box select:not(:focus):has(option:checked)  + label{
+    height: auto;
+    width: auto;
+    overflow: auto;
+} 
+#b-type-select-box select{
+    border: none;
+    padding: 1.7em .8em;
+    background-color: #004445;
+    color: #004445;
+}
+#b-type-select-box select:hover{
+    background-color: #003a3b;
+    color: #003a3b;
+    cursor: pointer;
+}
+#b-type-select-box select option:checked{
+    background-color: #a9a9a9;
+    color: #000;
+}
+#b-type-select-box select:focus option{
+    color: #fff;
+}
+@media all and (min-width: 450px) {
+    #b-type-select-box label{
+        top: .55em;
+        right: .75em;
+    }
+    #b-type-select-box select{
+        padding: .8em;
+    }
+}
 @media all and (min-width: 850px) {
     .full-list {
         columns: 2 auto;
