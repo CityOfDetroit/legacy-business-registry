@@ -269,6 +269,8 @@ export default class LBDirectory extends HTMLElement {
                             <p>
                             <strong>Category:</strong> ${this.cleanCategoryName(bInfo.properties.busi_type)}<br>
                             <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
+                            <strong>Neighborhood:</strong> ${bInfo.properties.Neighborhood}<br>
+                            <strong>Council District:</strong> ${bInfo.properties.CouncilDistrict}<br>
                             <strong>Established:</strong> ${this.getCleanDate(bInfo.properties.date_)}
                             ${(bInfo.properties.busi_owners_email != null) ? `<br><strong>Email:</strong>${bInfo.properties.busi_owners_email}` : ''}
                             ${(bInfo.properties.busi_owners_phone != null) ? `<br><strong>Phone:</strong>${bInfo.properties.busi_owners_phone}` : ''}
