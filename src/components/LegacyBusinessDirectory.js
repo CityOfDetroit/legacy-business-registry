@@ -531,7 +531,7 @@ export default class LBDirectory extends HTMLElement {
                     bMap.setAttribute('data-zoom','11');
                     bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
                     bMap.setAttribute('data-map-layers',JSON.stringify(tempLayers));
-                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"}]}');
+                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"},{"type":"field-value","label":"Neighborhood:","value":"Neighborhood"},{"type":"field-value","label":"Council District:","value":"CouncilDistrict"},{"type":"field-value","label":"Email:","value":"busi_owners_email"},{"type":"field-value","label":"Phone:","value":"busi_owners_phone"},{"type":"field-link","label":"Website","value":"busi_owners_website"},{"type":"field-value","label":"Description","value":"desc_business"}]}');
                     bMap.setAttribute('data-map-state','init');
                     bMap.setAttribute('data-map-active-data','businesses');
                     bList.appendChild(bMap);
