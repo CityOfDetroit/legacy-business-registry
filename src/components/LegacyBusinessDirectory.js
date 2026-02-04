@@ -505,7 +505,7 @@ export default class LBDirectory extends HTMLElement {
                             { "name": "data-points", 
                                 "type": "circle", 
                                 "radius": 10, 
-                                "color": "#004445", 
+                                "color": "#9fd5b3", 
                                 "active": true, 
                                 "sort": 10, 
                                 "source": "data-points" 
@@ -517,8 +517,7 @@ export default class LBDirectory extends HTMLElement {
                         {
                             "name":"council",
                             "layers":[
-                                {"name":"council-lines","type":"line","color":"#004445","opacity":null,"width":2,"active":true,"source":"council"},
-                                {"name":"council-fill","type":"fill","color":"#004445","opacity":0.1,"width":null,"active":true,"source":"council"}
+                                {"name":"council-lines","type":"line","color":"#9fd5b3","opacity":null,"width":2,"active":true,"source":"council"}
                             ],
                             "source":"https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Council_Districts/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
                         }
@@ -529,6 +528,7 @@ export default class LBDirectory extends HTMLElement {
                     bMap.setAttribute('data-map-mode','popup');
                     // bMap.setAttribute('data-center','-83.103111,42.31103400000001');
                     bMap.setAttribute('data-zoom','11');
+                    bMap.setAttribute('data-basemap', 'dark');
                     bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
                     bMap.setAttribute('data-map-layers',JSON.stringify(tempLayers));
                     bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"},{"type":"field-value","label":"Neighborhood:","value":"Neighborhood"},{"type":"field-value","label":"Council District:","value":"CouncilDistrict"},{"type":"field-value","label":"Email:","value":"busi_owners_email"},{"type":"field-value","label":"Phone:","value":"busi_owners_phone"},{"type":"field-link","label":"Website","value":"busi_owners_website"},{"type":"field-value","label":"Description","value":"desc_business"}]}');
