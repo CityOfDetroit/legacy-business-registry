@@ -1,6 +1,5 @@
 'use strict';
 import styles from '!!raw-loader!./LBDirectory.css';
-import centroid from '@turf/centroid';
 
 export default class LBDirectory extends HTMLElement {
     static get observedAttributes() {
@@ -218,12 +217,10 @@ export default class LBDirectory extends HTMLElement {
             case 'data-active-filters':
                     const newFilters = JSON.parse(newValue);
                     let url= this.buildQuery(newFilters);
-                    console.log(url);
                     const app = this;
                     fetch(url)
                     .then((resp) => resp.json()) // Transform the data into json
                     .then(function (data) {
-                        console.log(data);
                         app.setAttribute('data-raw-list', JSON.stringify(data));
                         // (app.map.map.getSource('data-points')) ? app.map.map.getSource('data-points').setData(data) : 0;
                     }).catch(err => {
@@ -266,6 +263,9 @@ export default class LBDirectory extends HTMLElement {
                     <h4>${bInfo.properties.busi_name}</h4>
                     <div class="row">
                         <div class="col-md-6 order-2 order-md-1">
+                            <img style="width:100%" src="${bInfo.properties.photo_url}" alt="Photo of ${bInfo.properties.busi_name}"></img>
+                        </div>
+                        <div class="col-md-6 order-1 order-md-2">
                             <p>
                             <strong>Category:</strong> ${this.cleanCategoryName(bInfo.properties.busi_type)}<br>
                             <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
@@ -275,10 +275,6 @@ export default class LBDirectory extends HTMLElement {
                             ${(bInfo.properties.busi_owners_email != null) ? `<br><strong>Email:</strong>${bInfo.properties.busi_owners_email}` : ''}
                             ${(bInfo.properties.busi_owners_phone != null) ? `<br><strong>Phone:</strong>${bInfo.properties.busi_owners_phone}` : ''}
                             ${(bInfo.properties.busi_owners_website != null) ? `<br><a href="${bInfo.properties.busi_owners_website}" target="_blank">Website</a>` : ''}
-                            </p>
-                        </div>
-                        <div class="col-md-6 order-1 order-md-2">
-                            <p>
                             ${bInfo.properties.desc_business}
                             </p>
                         </div>
@@ -433,10 +429,6 @@ export default class LBDirectory extends HTMLElement {
                     this.appWrapper.removeChild(this.appWrapper.firstChild);
                 }
                 let bList = document.createElement('article');
-                let bTitle = document.createElement('h2');
-                bTitle.innerText = 'Legacy Businesses';
-                
-                bList.appendChild(bTitle);
                 // Build view switch
                 let displayGroup = document.createElement('cod-button-group');
                 displayGroup.setAttribute('label', 'Display switch');
@@ -517,7 +509,7 @@ export default class LBDirectory extends HTMLElement {
                         {
                             "name":"council",
                             "layers":[
-                                {"name":"council-lines","type":"line","color":"#9fd5b3","opacity":null,"width":2,"active":true,"source":"council"}
+                                {"name":"council-lines","type":"line","color":"#feb70d","opacity":null,"width":2,"active":true,"source":"council"}
                             ],
                             "source":"https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Council_Districts/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
                         }
@@ -531,7 +523,7 @@ export default class LBDirectory extends HTMLElement {
                     bMap.setAttribute('data-basemap', 'dark');
                     bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
                     bMap.setAttribute('data-map-layers',JSON.stringify(tempLayers));
-                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"},{"type":"field-value","label":"Neighborhood:","value":"Neighborhood"},{"type":"field-value","label":"Council District:","value":"CouncilDistrict"},{"type":"field-value","label":"Email:","value":"busi_owners_email"},{"type":"field-value","label":"Phone:","value":"busi_owners_phone"},{"type":"field-link","label":"Website","value":"busi_owners_website"},{"type":"field-value","label":"Description","value":"desc_business"}]}');
+                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-image","url":"photo_url","path":"","alt":"busi_name","format":""},{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"},{"type":"field-value","label":"Neighborhood:","value":"Neighborhood"},{"type":"field-value","label":"Council District:","value":"CouncilDistrict"},{"type":"field-value","label":"Email:","value":"busi_owners_email"},{"type":"field-value","label":"Phone:","value":"busi_owners_phone"},{"type":"field-link","label":"Website","value":"busi_owners_website"},{"type":"field-value","label":"Description","value":"desc_business"}]}');
                     bMap.setAttribute('data-map-state','init');
                     bMap.setAttribute('data-map-active-data','businesses');
                     bList.appendChild(bMap);
