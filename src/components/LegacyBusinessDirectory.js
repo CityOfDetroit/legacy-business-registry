@@ -275,7 +275,7 @@ export default class LBDirectory extends HTMLElement {
                             ${(bInfo.properties.busi_owners_email != null) ? `<br><strong>Email:</strong>${bInfo.properties.busi_owners_email}` : ''}
                             ${(bInfo.properties.busi_owners_phone != null) ? `<br><strong>Phone:</strong>${bInfo.properties.busi_owners_phone}` : ''}
                             ${(bInfo.properties.busi_owners_website != null) ? `<br><a href="${bInfo.properties.busi_owners_website}" target="_blank">Website</a>` : ''}
-                            ${bInfo.properties.desc_business}
+                            <br>${bInfo.properties.desc_business}
                             </p>
                         </div>
                     </div>
@@ -523,7 +523,7 @@ export default class LBDirectory extends HTMLElement {
                     bMap.setAttribute('data-basemap', 'dark');
                     bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
                     bMap.setAttribute('data-map-layers',JSON.stringify(tempLayers));
-                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-image","url":"photo_url","path":"","alt":"busi_name","format":""},{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"},{"type":"field-value","label":"Neighborhood:","value":"Neighborhood"},{"type":"field-value","label":"Council District:","value":"CouncilDistrict"},{"type":"field-value","label":"Email:","value":"busi_owners_email"},{"type":"field-value","label":"Phone:","value":"busi_owners_phone"},{"type":"field-link","label":"Website","value":"busi_owners_website"},{"type":"field-value","label":"Description","value":"desc_business"}]}');
+                    bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-image","url":"photo_url","path":"","alt":"busi_name","format":""},{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"},{"type":"field-value","label":"Neighborhood:","value":"Neighborhood"},{"type":"field-value","label":"Council District:","value":"CouncilDistrict"},{"type":"field-value","label":"Email:","value":"busi_owners_email"},{"type":"field-value","label":"Phone:","value":"busi_owners_phone"},{"type":"field-link","label":"Website","link":"busi_owners_website","value":"busi_owners_website"},{"type":"field-value","label":"Description","value":"desc_business"}]}');
                     bMap.setAttribute('data-map-state','init');
                     bMap.setAttribute('data-map-active-data','businesses');
                     bList.appendChild(bMap);
