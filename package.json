@@ -32,7 +32,8 @@
   "author": "Edgar Montes",
   "license": "MIT",
   "dependencies": {
-    "@sentry/browser": "^7.64.0"
+    "@sentry/browser": "^7.64.0",
+    "cod-design-system": "^3.0.0-alpha.14"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",

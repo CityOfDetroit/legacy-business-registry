@@ -15,6 +15,7 @@ cod-map{
 }
 .full-list h3{
     margin: 0 0 .5em 0;
+    width: 100%;
 }
 .full-list cod-button{
     display: block;
@@ -50,11 +51,12 @@ cod-map{
     border: none;
     padding: 1.7em .8em;
     background-color: #004445;
-    color: #004445;
+    color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e")
 }
 #b-type-select-box select:hover{
     background-color: #003a3b;
-    color: #003a3b;
+    color: #fff;
     cursor: pointer;
 }
 #b-type-select-box select option:checked{
@@ -64,39 +66,32 @@ cod-map{
 #b-type-select-box select:focus option{
     color: #fff;
 }
+.cat-container img{
+    border-radius: 1em;
+    width: 100%;
+}
+.cat-container .plus-icon{
+    color: #004445;
+    position: absolute;
+    top: 25%;
+    right: 40%;
+}
+.cat-container .see-more-btn{
+    position: absolute;
+    top: 9em;
+    right: 5em;
+}
+.cat-container .bmore-img-box{
+    box-shadow: 5px 5px 15px 1px rgba(0,0,0,0.32);
+    border-radius: 1em;
+    display: flex;
+}
 @media all and (min-width: 450px) {
     #b-type-select-box label{
         top: .55em;
         right: .75em;
     }
     #b-type-select-box select{
-        padding: .8em;
-    }
-}
-@media all and (min-width: 850px) {
-    .full-list {
-        columns: 2 auto;
-        padding: 1em;
-    }
-    .b-cat-block{
-        -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid;
-    }
-}
-@media all and (min-width: 1275px) {
-    .full-list {
-        columns: 3 auto;
-        padding: 1em;
-    }
-    .b-cat-block{
-        -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid;
-    }
-}
-@media all and (min-width: 1700px) {
-    .full-list {
-        columns: 4 auto;
-        padding: 1em;
-    }
-    .b-cat-block{
-        -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid;
+        padding: .45em;
     }
 }
