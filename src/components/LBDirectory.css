@@ -86,6 +86,11 @@ cod-map{
     border-radius: 1em;
     display: flex;
 }
+/* Styles for filter listing */
+.b-group-container{
+    max-height: 100vh;
+    overflow-y: auto;
+}
 @media all and (min-width: 450px) {
     #b-type-select-box label{
         top: .55em;

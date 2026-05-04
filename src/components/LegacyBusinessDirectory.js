@@ -47,6 +47,7 @@ export default class LBDirectory extends HTMLElement {
         this.modalContent = document.createElement('article');
         this.modalContent.innerHTML = ``;
         this.modal = document.createElement('cod-modal');
+        this.modal.setAttribute('data-full-screen', 'always');
         this.modal.setAttribute('data-id', 'business-info');
         this.modal.setAttribute('data-size', 'lg');
 
@@ -341,15 +342,21 @@ export default class LBDirectory extends HTMLElement {
     }
 
     updateMainData(ev){
+        console.log(ev);
         const app = document.getElementsByTagName('cod-lb-directory');
         let filters = (app[0].getAttribute('data-active-filters') === null) ? {} : JSON.parse(app[0].getAttribute('data-active-filters'));
-        if(ev.target.tagName == 'SELECT'){
-            filters[ev.target.id] = ev.target.value;
-        }else{
-            // let multiLayers = ev.target.formCheck.value.split(',');
-            // tempFilters.forEach((filter) => {
-            //     (multiLayers.includes(filter)) ? 0 : filters.push(filter);
-            // });
+        switch (ev.target.tagName) {
+            case 'SELECT':
+                filters[ev.target.id] = ev.target.value;
+                break;
+
+            case 'COD-BUTTON':
+                console.log(ev.target);
+                filters['busi_type'] = ev.target.getAttribute('data-business-cat');
+                break;
+        
+            default:
+                break;
         }
         console.log(filters);
         app[0].setAttribute('data-active-filters', JSON.stringify(filters));
@@ -533,73 +540,34 @@ export default class LBDirectory extends HTMLElement {
                     bMap.setAttribute('data-map-active-data','businesses');
                     bList.appendChild(bMap);
                 }else{
-                    // Build business listing
-                    let bContainer = document.createElement('section');
-                    bContainer.className = 'full-list';
-                    let organizedData = JSON.parse(app.getAttribute('data-categorized-list'));
-                    for (const cat in organizedData){
-                        if(organizedData[cat].length > 0) {
-                            let catBlock = document.createElement('div');
-                            catBlock.className = 'row mb-3';
-                            let bCategory = document.createElement('h3');
-                            bCategory.className = 'col-sm-12';
-                            bCategory.innerText = app.cleanCategoryName(cat);
-                            catBlock.appendChild(bCategory);
-                            if(organizedData[cat].length > 6){
-                                for (let index = 0; index < 5; index++) {
-                                    let catContainer = document.createElement('div');
-                                    catContainer.className = 'col-md-2 col-sm-6 cat-container';
-                                    catBlock.appendChild(catContainer);
-                                    let bImgBox = document.createElement('div');
-                                    bImgBox.className = 'b-img-box';
-                                    let bImg = document.createElement('img');
-                                    bImg.src = organizedData[cat][index].properties.photo_url;
-                                    bImg.alt = organizedData[cat][index].properties.busi_name;
-                                    bImgBox.appendChild(bImg);
-                                    catContainer.appendChild(bImgBox);
-                                    let bItem = document.createElement('cod-button');
-                                    bItem.setAttribute('variant', 'text');
-                                    bItem.setAttribute('data-business', JSON.stringify(organizedData[cat][index]));
-                                    bItem.innerText = organizedData[cat][index].properties.busi_name;    
-                                    bItem.addEventListener('click', app.showBusiness);
-                                    catContainer.appendChild(bItem);    
-                                    let bAddress = document.createElement('p');
-                                    bAddress.style.fontSize = '.75em';
-                                    bAddress.innerText = organizedData[cat][index].properties.busi_owners_address;
-                                    catContainer.appendChild(bAddress);
-                                }
-                                let catMoreContainer = document.createElement('div');
-                                catMoreContainer.className = 'col-md-2 col-sm-6 cat-container';
-                                catMoreContainer.style.position = 'relative';
-                                catBlock.appendChild(catMoreContainer);
-                                let bImgBox = document.createElement('div');
-                                bImgBox.className = 'bmore-img-box';
-                                let bImg = document.createElement('img');
-                                bImg.src = 'https://dummyimage.com/300x300/FFF/FFF';
-                                bImg.alt = 'See more results';
-                                bImgBox.appendChild(bImg);
-                                catMoreContainer.appendChild(bImgBox);
-                                let plusIcon = document.createElement('span');
-                                plusIcon.className = 'plus-icon';
-                                plusIcon.innerHTML = `
-                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                </svg>
-                                `;
-                                bImgBox.appendChild(plusIcon);
-                                let bItem = document.createElement('cod-button');
-                                bItem.className = 'see-more-btn';
-                                bItem.setAttribute('variant', 'text');
-                                bItem.setAttribute('data-business', JSON.stringify(organizedData[cat]));
-                                bItem.innerText = `See More Results`;    
-                                bItem.addEventListener('click', app.showBusiness);
-                                bImgBox.appendChild(bItem);    
-                            }else{
+                    if(currentFilters !== null){
+                         // Build full business listing
+                        let bContainer = document.createElement('section');
+                        bContainer.className = 'full-list';
+                        let organizedData = JSON.parse(app.getAttribute('data-categorized-list'));
+                        for (const cat in organizedData){
+                            if(organizedData[cat].length > 0) {
+                                let catBlock = document.createElement('div');
+                                catBlock.className = 'row mb-3';
+                                let bCategory = document.createElement('h3');
+                                bCategory.className = 'col-sm-12';
+                                bCategory.innerText = app.cleanCategoryName(cat);
+                                catBlock.appendChild(bCategory);
+                                let bGroupContainer = document.createElement('div');
+                                bGroupContainer.className = 'col-md-6 col-sm-12 b-group-container order-2 order-md-1';
+                                let bGroupSubContainer = document.createElement('div');
+                                bGroupSubContainer.className = 'row';
+                                bGroupContainer.appendChild(bGroupSubContainer);
+                                let bMapContainer = document.createElement('div');
+                                bMapContainer.className = 'col-md-6 col-sm-12 order-1 order-md-2';
+                                catBlock.appendChild(bGroupContainer);
+                                catBlock.appendChild(bMapContainer);
+                                
+                                // Create business items
                                 organizedData[cat].forEach(item => {
                                     let catContainer = document.createElement('div');
-                                    catContainer.className = 'col-md-2 col-sm-6 cat-container';
-                                    catBlock.appendChild(catContainer);
+                                    catContainer.className = 'col-md-6 col-sm-12 cat-container';
+                                    bGroupSubContainer.appendChild(catContainer);
                                     let bImgBox = document.createElement('div');
                                     bImgBox.className = 'b-img-box';
                                     let bImg = document.createElement('img');
@@ -618,12 +586,141 @@ export default class LBDirectory extends HTMLElement {
                                     bAddress.innerText = item.properties.busi_owners_address;
                                     catContainer.appendChild(bAddress);
                                 });
+                                // Building business map
+                                let tempMapData = { 
+                                    "id": "businesses", 
+                                    "layers": [
+                                        { "name": "data-points", 
+                                            "type": "circle", 
+                                            "radius": 10, 
+                                            "color": "#9fd5b3", 
+                                            "active": true, 
+                                            "sort": 10, 
+                                            "source": "data-points" 
+                                        }
+                                    ], 
+                                    "source": rawData
+                                };
+                                let tempLayers = [
+                                    {
+                                        "name":"council",
+                                        "layers":[
+                                            {"name":"council-lines","type":"line","color":"#feb70d","opacity":null,"width":2,"active":true,"source":"council"}
+                                        ],
+                                        "source":"https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/Council_Districts/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+                                    }
+                                ];
+                                console.log(tempMapData);
+                                let bMap = document.createElement('cod-map');
+                                bMap.id = 'business-map';
+                                bMap.setAttribute('data-map-mode','popup');
+                                // bMap.setAttribute('data-center','-83.103111,42.31103400000001');
+                                bMap.setAttribute('data-zoom','11');
+                                bMap.setAttribute('data-basemap', 'dark');
+                                bMap.setAttribute('data-map-data',JSON.stringify(tempMapData));
+                                bMap.setAttribute('data-map-layers',JSON.stringify(tempLayers));
+                                bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-image","url":"photo_url","path":"","alt":"busi_name","format":""},{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"}]}');
+                                bMap.setAttribute('data-map-state','init');
+                                bMap.setAttribute('data-map-active-data','businesses');
+                                bMapContainer.appendChild(bMap);
+                                
+                                bContainer.appendChild(catBlock);
                             }
-                            
-                            bContainer.appendChild(catBlock);
                         }
+                        bList.appendChild(bContainer);
+                    }else{
+                        // Build full business listing
+                        let bContainer = document.createElement('section');
+                        bContainer.className = 'full-list';
+                        let organizedData = JSON.parse(app.getAttribute('data-categorized-list'));
+                        for (const cat in organizedData){
+                            if(organizedData[cat].length > 0) {
+                                let catBlock = document.createElement('div');
+                                catBlock.className = 'row mb-3';
+                                let bCategory = document.createElement('h3');
+                                bCategory.className = 'col-sm-12';
+                                bCategory.innerText = app.cleanCategoryName(cat);
+                                catBlock.appendChild(bCategory);
+                                if(organizedData[cat].length > 6){
+                                    for (let index = 0; index < 5; index++) {
+                                        let catContainer = document.createElement('div');
+                                        catContainer.className = 'col-md-2 col-sm-6 cat-container';
+                                        catBlock.appendChild(catContainer);
+                                        let bImgBox = document.createElement('div');
+                                        bImgBox.className = 'b-img-box';
+                                        let bImg = document.createElement('img');
+                                        bImg.src = organizedData[cat][index].properties.photo_url;
+                                        bImg.alt = organizedData[cat][index].properties.busi_name;
+                                        bImgBox.appendChild(bImg);
+                                        catContainer.appendChild(bImgBox);
+                                        let bItem = document.createElement('cod-button');
+                                        bItem.setAttribute('variant', 'text');
+                                        bItem.setAttribute('data-business', JSON.stringify(organizedData[cat][index]));
+                                        bItem.innerText = organizedData[cat][index].properties.busi_name;    
+                                        bItem.addEventListener('click', app.showBusiness);
+                                        catContainer.appendChild(bItem);    
+                                        let bAddress = document.createElement('p');
+                                        bAddress.style.fontSize = '.75em';
+                                        bAddress.innerText = organizedData[cat][index].properties.busi_owners_address;
+                                        catContainer.appendChild(bAddress);
+                                    }
+                                    let catMoreContainer = document.createElement('div');
+                                    catMoreContainer.className = 'col-md-2 col-sm-6 cat-container';
+                                    catMoreContainer.style.position = 'relative';
+                                    catBlock.appendChild(catMoreContainer);
+                                    let bImgBox = document.createElement('div');
+                                    bImgBox.className = 'bmore-img-box';
+                                    let bImg = document.createElement('img');
+                                    bImg.src = 'https://dummyimage.com/300x300/FFF/FFF';
+                                    bImg.alt = 'See more results';
+                                    bImgBox.appendChild(bImg);
+                                    catMoreContainer.appendChild(bImgBox);
+                                    let plusIcon = document.createElement('span');
+                                    plusIcon.className = 'plus-icon';
+                                    plusIcon.innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                    </svg>
+                                    `;
+                                    bImgBox.appendChild(plusIcon);
+                                    let bItem = document.createElement('cod-button');
+                                    bItem.className = 'see-more-btn';
+                                    bItem.setAttribute('variant', 'text');
+                                    bItem.setAttribute('data-business-cat', cat);
+                                    bItem.innerText = `See More Results`;    
+                                    bItem.addEventListener('click', app.updateMainData);
+                                    bImgBox.appendChild(bItem);    
+                                }else{
+                                    organizedData[cat].forEach(item => {
+                                        let catContainer = document.createElement('div');
+                                        catContainer.className = 'col-md-2 col-sm-6 cat-container';
+                                        catBlock.appendChild(catContainer);
+                                        let bImgBox = document.createElement('div');
+                                        bImgBox.className = 'b-img-box';
+                                        let bImg = document.createElement('img');
+                                        bImg.src = item.properties.photo_url;
+                                        bImg.alt = item.properties.busi_name;
+                                        bImgBox.appendChild(bImg);
+                                        catContainer.appendChild(bImgBox);
+                                        let bItem = document.createElement('cod-button');
+                                        bItem.setAttribute('variant', 'text');
+                                        bItem.setAttribute('data-business', JSON.stringify(item));
+                                        bItem.innerText = item.properties.busi_name;    
+                                        bItem.addEventListener('click', app.showBusiness);
+                                        catContainer.appendChild(bItem);    
+                                        let bAddress = document.createElement('p');
+                                        bAddress.style.fontSize = '.75em';
+                                        bAddress.innerText = item.properties.busi_owners_address;
+                                        catContainer.appendChild(bAddress);
+                                    });
+                                }
+                                
+                                bContainer.appendChild(catBlock);
+                            }
+                        }
+                        bList.appendChild(bContainer);
                     }
-                    bList.appendChild(bContainer);
                 }
                 
                 this.appWrapper.appendChild(bList);
