@@ -540,7 +540,7 @@ export default class LBDirectory extends HTMLElement {
                     bMap.setAttribute('data-map-active-data','businesses');
                     bList.appendChild(bMap);
                 }else{
-                    if(currentFilters !== null){
+                    if(currentFilters !== null && currentFilters['busi_type'] !== 'null'){
                          // Build full business listing
                         let bContainer = document.createElement('section');
                         bContainer.className = 'full-list';
