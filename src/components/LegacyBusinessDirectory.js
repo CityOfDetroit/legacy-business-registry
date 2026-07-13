@@ -265,26 +265,27 @@ export default class LBDirectory extends HTMLElement {
                 let bInfo = JSON.parse(newValue);
                 console.log(bInfo);
                  this.modalContent.innerHTML = `
+                    <cod-button variant="primary" size="medium"><cod-icon data-icon="chevron-left" data-size="small"></cod-icon> Back</cod-button>
                     <h4>${bInfo.properties.busi_name}</h4>
                     <div class="row mb-3">
-                        <div class="col-md-6 order-2 order-md-1">
+                        <div class="col-md-4">
                             <img style="width:100%" src="${bInfo.properties.photo_url}" alt="Photo of ${bInfo.properties.busi_name}"></img>
-                        </div>
-                        <div class="col-md-6 order-1 order-md-2">
                             <p>
-                            <strong>Category:</strong> ${this.cleanCategoryName(bInfo.properties.busi_type)}<br>
-                            <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
-                            <strong>Neighborhood:</strong> ${bInfo.properties.Neighborhood}<br>
-                            <strong>Council District:</strong> ${bInfo.properties.CouncilDistrict}<br>
-                            <strong>Established:</strong> ${this.getCleanDate(bInfo.properties.date_)}
-                            ${(bInfo.properties.busi_owners_email != null) ? `<br><strong>Email:</strong>${bInfo.properties.busi_owners_email}` : ''}
-                            ${(bInfo.properties.busi_owners_phone != null) ? `<br><strong>Phone:</strong>${bInfo.properties.busi_owners_phone}` : ''}
-                            ${(bInfo.properties.busi_owners_website != null) ? `<br><a href="${bInfo.properties.busi_owners_website}" target="_blank">Website</a>` : ''}
-                            <br>${bInfo.properties.desc_business}
+                                <strong>Category:</strong> ${this.cleanCategoryName(bInfo.properties.busi_type)}<br>
+                                <strong>Address:</strong> ${bInfo.properties.busi_owners_address}<br>
+                                <strong>Neighborhood:</strong> ${bInfo.properties.Neighborhood}<br>
+                                <strong>Council District:</strong> ${bInfo.properties.CouncilDistrict}<br>
+                                <strong>Established:</strong> ${this.getCleanDate(bInfo.properties.date_)}
+                                ${(bInfo.properties.busi_owners_email != null) ? `<br><strong>Email:</strong>${bInfo.properties.busi_owners_email}` : ''}
+                                ${(bInfo.properties.busi_owners_phone != null) ? `<br><strong>Phone:</strong>${bInfo.properties.busi_owners_phone}` : ''}
+                                ${(bInfo.properties.busi_owners_website != null) ? `<br><a href="${bInfo.properties.busi_owners_website}" target="_blank">Website</a>` : ''}
+                                <br>${bInfo.properties.desc_business}
                             </p>
                         </div>
+                        <div class="col-md-8 mb-2">
+                            <cod-map data-location="{&quot;address&quot;:&quot;${bInfo.properties.busi_owners_address}&quot;,&quot;location&quot;:{&quot;x&quot;:${bInfo.geometry.coordinates[0]},&quot;y&quot;:${bInfo.geometry.coordinates[1]}}}" data-map-state="init"></cod-map>  
+                        </div>
                     </div>
-                    <cod-map data-location="{&quot;address&quot;:&quot;${bInfo.properties.busi_owners_address}&quot;,&quot;location&quot;:{&quot;x&quot;:${bInfo.geometry.coordinates[0]},&quot;y&quot;:${bInfo.geometry.coordinates[1]}}}" data-map-state="init"></cod-map>
                 `;
                 this.modal.setAttribute('data-show', true);
                 break;
@@ -560,8 +561,12 @@ export default class LBDirectory extends HTMLElement {
                                 bGroupContainer.appendChild(bGroupSubContainer);
                                 let bMapContainer = document.createElement('div');
                                 bMapContainer.className = 'col-md-6 col-sm-12 order-1 order-md-2';
+                                let bMapSticky = document.createElement('div');
+                                bMapSticky.className = 'sticky';
+                                bMapContainer.appendChild(bMapSticky);
                                 catBlock.appendChild(bGroupContainer);
                                 catBlock.appendChild(bMapContainer);
+
                                 
                                 // Create business items
                                 organizedData[cat].forEach(item => {
@@ -622,7 +627,7 @@ export default class LBDirectory extends HTMLElement {
                                 bMap.setAttribute('data-popup-structure','{"businesses":[{"type":"field-image","url":"photo_url","path":"","alt":"busi_name","format":""},{"type":"field-value","label":"Name:","value":"busi_name"},{"type":"field-value","label":"Address:","value":"busi_owners_address"}]}');
                                 bMap.setAttribute('data-map-state','init');
                                 bMap.setAttribute('data-map-active-data','businesses');
-                                bMapContainer.appendChild(bMap);
+                                bMapSticky.appendChild(bMap);
                                 
                                 bContainer.appendChild(catBlock);
                             }
@@ -644,7 +649,7 @@ export default class LBDirectory extends HTMLElement {
                                 if(organizedData[cat].length > 6){
                                     for (let index = 0; index < 5; index++) {
                                         let catContainer = document.createElement('div');
-                                        catContainer.className = 'col-md-2 col-sm-6 cat-container';
+                                        catContainer.className = 'col-md-2 col-sm-6 col-6 cat-container';
                                         catBlock.appendChild(catContainer);
                                         let bImgBox = document.createElement('div');
                                         bImgBox.className = 'b-img-box';
@@ -665,7 +670,7 @@ export default class LBDirectory extends HTMLElement {
                                         catContainer.appendChild(bAddress);
                                     }
                                     let catMoreContainer = document.createElement('div');
-                                    catMoreContainer.className = 'col-md-2 col-sm-6 cat-container';
+                                    catMoreContainer.className = 'col-md-2 col-sm-6 col-6 cat-container';
                                     catMoreContainer.style.position = 'relative';
                                     catBlock.appendChild(catMoreContainer);
                                     let bImgBox = document.createElement('div');
@@ -694,7 +699,7 @@ export default class LBDirectory extends HTMLElement {
                                 }else{
                                     organizedData[cat].forEach(item => {
                                         let catContainer = document.createElement('div');
-                                        catContainer.className = 'col-md-2 col-sm-6 cat-container';
+                                        catContainer.className = 'col-md-2 col-sm-6 col-6 cat-container';
                                         catBlock.appendChild(catContainer);
                                         let bImgBox = document.createElement('div');
                                         bImgBox.className = 'b-img-box';

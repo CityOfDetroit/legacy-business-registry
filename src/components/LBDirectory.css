@@ -12,6 +12,7 @@ d6-business-map{
 }
 cod-map{
     flex: 1;
+    height: 20em;
 }
 .full-list h3{
     margin: 0 0 .5em 0;
@@ -88,8 +89,8 @@ cod-map{
 }
 /* Styles for filter listing */
 .b-group-container{
-    max-height: 100vh;
-    overflow-y: auto;
+    padding-top: 1em;
+    border-top: 1em solid #feb70d;
 }
 @media all and (min-width: 450px) {
     #b-type-select-box label{
@@ -98,5 +99,19 @@ cod-map{
     }
     #b-type-select-box select{
         padding: .45em;
+    }
+    cod-map {
+        height: 90vh;
+    }
+    .sticky{
+        position: sticky;
+        top: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .b-group-container{
+        padding-top: 0;
+        border-top: none;
     }
 }
